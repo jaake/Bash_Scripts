@@ -16,6 +16,7 @@ exit
 mount_fail(){
 echo
 echo Please manually mount your boot directory
+exit
 }
 echo creating cpio archive...
 find . |cpio -H newc -o > /tmp/temp.cpio || fail
