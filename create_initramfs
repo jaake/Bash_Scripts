@@ -1,11 +1,16 @@
 #!/bin/sh
-#Simple script to create custom initramfs, this script must be run inside the working directory 
-#that contains the files to be included in the initramfs 
+# Simple script to create custom initramfs, this script must be run inside the 
+# working directory that contains the files to be included in the initramfs. 
+# The Linux kernel expects a gzip'd cpio archive for an intramfs which is 
+# precisely what we are creating from the contents of the working directory.  
+# This script also attempts to mount you boot directory in order to place the 
+# newly created initramfs in its correct place. 
 
 NAME="custom_initramfs.igz"
 
 fail(){
-echo Borked!
+echo
+echo Borked! either the cpio or gzip operation failed
 exit
 }
 permission_fail(){
@@ -31,4 +36,4 @@ fi
 cat /tmp/temp.cpio | gzip > /boot/$NAME || fail
 echo cleaning up...
 rm /tmp/temp.cpio
-echo Finished!
+echo Finished! check your boot directory and remember to update your bootloader. 
