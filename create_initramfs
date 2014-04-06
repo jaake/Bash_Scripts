@@ -1,0 +1,33 @@
+#!/bin/sh
+#Simple script to create custom initramfs, this script must be run inside the working directory 
+#that contains the files to be included in the initramfs 
+
+NAME="custom_initramfs.igz"
+
+fail(){
+echo Borked!
+exit
+}
+permission_fail(){
+echo 
+echo You must run this script with root permissions!
+exit
+}
+mount_fail(){
+echo
+echo Please manually mount your boot directory
+}
+echo creating cpio archive...
+find . |cpio -H newc -o > /tmp/temp.cpio || fail
+sleep 1
+echo G-zipping it up...
+if df | grep -q boot; 
+then
+  cat /tmp/temp.cpio | gzip > /boot/$NAME || permission_fail
+else
+  mount /boot || mount_fail
+fi
+cat /tmp/temp.cpio | gzip > /boot/$NAME || fail
+echo cleaning up...
+rm /tmp/temp.cpio
+echo Finished!
