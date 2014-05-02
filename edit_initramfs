@@ -9,10 +9,15 @@ DIR="extracted_initramfs"
 
 fail() {
 echo
-echo It seems you do not have root permissions, this script must be run as root ...
+echo Borked! did you remember to specify a file?
 exit
 }
 
+# Check for root permissions
+if [ "$(id -u)" != "0" ]; then
+    echo "You must have root permissions to run this script" 
+    exit 1
+fi
 echo Creating working directory ...
 mkdir $DIR || fail 
 cd $DIR 
