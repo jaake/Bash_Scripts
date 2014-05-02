@@ -30,7 +30,7 @@ sleep 1
 echo G-zipping it up...
 if df | grep -q boot; 
 then
-  cat /tmp/temp.cpio | gzip > /boot/$NAME || permission_fail
+  cat /tmp/temp.cpio | gzip > /boot/$NAME || fail
 else
   mount /boot || mount_fail
 fi
