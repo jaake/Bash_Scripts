@@ -1,0 +1,27 @@
+#!/bin/bash
+# This script can be used to open any gzipped cpio archive which  
+# is the format normally used to created an initramfs we accomplish 
+# this by creating a working directory then unzipping and extracting 
+# the archive into it so you can see or edit everything that goes 
+# into your initramfs at boot.
+
+DIR="extracted_initramfs"
+
+fail() {
+echo
+echo It seems you do not have root permissions, this script must be run as root ...
+exit
+}
+
+echo Creating working directory ...
+mkdir $DIR || fail 
+cd $DIR 
+echo Unzipping and decrompressing ...
+cp "$1" zipped.cpio.gz || fail
+gunzip zipped.cpio.gz  || exit
+cpio -id < zipped.cpio 
+rm zipped.cpio 
+echo Success! 
+echo
+echo The directory extracted_initramfs should now contain the contents of the initramfs
+
