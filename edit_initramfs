@@ -1,9 +1,7 @@
 #!/bin/bash
-# This script can be used to open any gzipped cpio archive which  
-# is the format normally used to created an initramfs we accomplish 
-# this by creating a working directory then unzipping and extracting 
-# the archive into it so you can see or edit everything that goes 
-# into your initramfs at boot.
+#Point this at your initramfs to see what's inside 
+#EXAMPLE  # edit_initramfs /path/to/file
+#It plops it into whichever DIR you are currently in.
 
 DIR="extracted_initramfs"
 
