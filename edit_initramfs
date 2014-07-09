@@ -16,14 +16,38 @@ if [ "$(id -u)" != "0" ]; then
     echo "You must have root permissions to run this script" 
     exit 1
 fi
+
+# Check for type of archive
+TYPE=$( file -b "$1" ) 
+
+
+case "$TYPE" in
+	
+  "XZ compressed data") ARCHIVE_TOOL="unxz" FILE_EXT="xz"
+	;;
+	
+  "bzip2 compressed data") ARCHIVE_TOOL="bunzip" FILE_EXT="bz2"
+	;;
+	
+  "gzip compressed data") ARCHIVE_TOOL="gunzip" FILE_EXT="gz"
+	;;
+	
+  *) echo "not a recognized compressed filetype"
+	;;
+
+esac	
+
+
 echo Creating working directory ...
 mkdir $DIR || fail 
+cp "$1" "$DIR/zipped.cpio.$FILE_EXT" || fail
 cd $DIR 
+
 echo Unzipping and decrompressing ...
-cp "$1" zipped.cpio.gz || fail
-gunzip zipped.cpio.gz  || exit
+$ARCHIVE_TOOL zipped.cpio.$FILE_EXT  || exit 
 cpio -id < zipped.cpio 
 rm zipped.cpio 
+
 echo Success! 
 echo
 echo The directory "$DIR" should now contain the contents of the initramfs
