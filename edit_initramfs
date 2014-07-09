@@ -26,5 +26,5 @@ cpio -id < zipped.cpio
 rm zipped.cpio 
 echo Success! 
 echo
-echo The directory extracted_initramfs should now contain the contents of the initramfs
+echo The directory "$DIR" should now contain the contents of the initramfs
 
