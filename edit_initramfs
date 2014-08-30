@@ -9,14 +9,12 @@ dir_name="extracted_initramfs"
 type=$( file -b "$1" ) 
 
 fail() {
-echo
-echo Borked! did you remember to specify a file?
 exit 1
 }
 
 # Check for root permissions
 if [ "$(id -u)" != "0" ]; then
-    echo "You must have root permissions to run this script" >&2
+    echo "You must have root permissions to run this script" 
     exit 1
 fi
 
