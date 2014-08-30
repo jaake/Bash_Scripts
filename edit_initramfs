@@ -1,6 +1,6 @@
 #!/bin/bash
 #Point this at your initramfs to see what's inside 
-#EXAMPLE  # edit_initramfs /path/to/file
+#EXAMPLE, make sure to use full paths # edit_initramfs /path/to/file
 #It plops it into whichever directory you are currently in.
 
 dir_name="extracted_initramfs"
