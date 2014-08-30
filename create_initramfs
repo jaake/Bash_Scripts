@@ -3,7 +3,7 @@
 #that you want to put inside your initramfs.
 #EXAMPLE # cd /path/to/files/ && create_initramfs
 
-NAME="custom_initramfs.igz"
+file="custom_initramfs.igz"
 
 fail(){
 echo
@@ -27,11 +27,11 @@ sleep 1
 echo G-zipping it up...
 if df | grep -q boot; 
 then
-  cat /tmp/temp.cpio | gzip > /boot/$NAME || fail
+  cat /tmp/temp.cpio | gzip > /boot/$file || fail
 else
   mount /boot || mount_fail
 fi
-cat /tmp/temp.cpio | gzip > /boot/$NAME || fail
+cat /tmp/temp.cpio | gzip > /boot/$file || fail
 echo cleaning up...
 rm /tmp/temp.cpio
 echo Finished! check your boot directory and remember to update your bootloader. 

@@ -1,54 +1,69 @@
 #!/bin/bash
 #Point this at your initramfs to see what's inside 
 #EXAMPLE  # edit_initramfs /path/to/file
-#It plops it into whichever DIR you are currently in.
+#It plops it into whichever directory you are currently in.
 
-DIR="extracted_initramfs"
+dir_name="extracted_initramfs"
+
+# Check for type of archive
+type=$( file -b "$1" ) 
 
 fail() {
 echo
 echo Borked! did you remember to specify a file?
-exit
+exit 1
 }
 
 # Check for root permissions
 if [ "$(id -u)" != "0" ]; then
-    echo "You must have root permissions to run this script" 
+    echo "You must have root permissions to run this script" >&2
     exit 1
 fi
 
-# Check for type of archive
-TYPE=$( file -b "$1" ) 
+echo Creating working directory ...
+mkdir $dir_name || fail 
+cd $dir_name 
+
+unzip_xz() {
+cp $1 zipped.cpio.xz || fail
+echo Unzipping and decrompressing ...
+unxz zipped.cpio.xz  || exit 
+}
+
+unzip_bzip() {
+cp $1 zipped.cpio.bz2 || fail
+echo Unzipping and decrompressing ...
+bunzip zipped.cpio.bz2  || exit 
+}
+
+unzip_gzip() {
+cp $1 zipped.cpio.gz || fail
+echo Unzipping and decrompressing ...
+gunzip zipped.cpio.gz  || exit 
+}
 
 
-case "$TYPE" in
+case "$type" in
 	
-  "XZ compressed data") ARCHIVE_TOOL="unxz" FILE_EXT="xz"
+  *XZ*) unzip_xz $1
 	;;
 	
-  "bzip2 compressed data") ARCHIVE_TOOL="bunzip" FILE_EXT="bz2"
+  *bzip2*) unzip_bzip $1
 	;;
 	
-  "gzip compressed data") ARCHIVE_TOOL="gunzip" FILE_EXT="gz"
+  *gzip*) unzip_gzip $1
 	;;
 	
-  *) echo "not a recognized compressed filetype"
+  *) echo "not a recognized compressed filetype" && exit 1
 	;;
 
 esac	
 
 
-echo Creating working directory ...
-mkdir $DIR || fail 
-cp "$1" "$DIR/zipped.cpio.$FILE_EXT" || fail
-cd $DIR 
-
-echo Unzipping and decrompressing ...
-$ARCHIVE_TOOL zipped.cpio.$FILE_EXT  || exit 
 cpio -id < zipped.cpio 
 rm zipped.cpio 
 
 echo Success! 
 echo
-echo The directory "$DIR" should now contain the contents of the initramfs
+echo The directory "$dir_name" should now contain the contents of the initramfs
 
