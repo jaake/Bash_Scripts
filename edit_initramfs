@@ -8,10 +8,6 @@ dir_name="extracted_initramfs"
 # Check for type of archive
 type=$( file -b "$1" ) 
 
-fail() {
-exit 1
-}
-
 # Check for root permissions
 if [ "$(id -u)" != "0" ]; then
     echo "You must have root permissions to run this script" 
@@ -22,22 +18,28 @@ echo Creating working directory ...
 mkdir $dir_name || fail 
 cd $dir_name 
 
+fail() {
+echo "Something went wrong" >&2
+cd .. && rm -r $dir_name
+exit 1
+}
+
 unzip_xz() {
 cp $1 zipped.cpio.xz || fail
 echo Unzipping and decrompressing ...
-unxz zipped.cpio.xz  || exit 
+unxz zipped.cpio.xz  || fail
 }
 
 unzip_bzip() {
 cp $1 zipped.cpio.bz2 || fail
 echo Unzipping and decrompressing ...
-bunzip zipped.cpio.bz2  || exit 
+bunzip zipped.cpio.bz2  || fail 
 }
 
 unzip_gzip() {
 cp $1 zipped.cpio.gz || fail
 echo Unzipping and decrompressing ...
-gunzip zipped.cpio.gz  || exit 
+gunzip zipped.cpio.gz  || fail 
 }
 
 
@@ -52,15 +54,16 @@ case "$type" in
   *gzip*) unzip_gzip $1
 	;;
 	
-  *) echo "not a recognized compressed filetype" && exit 1
+  *) echo "not a recognized compressed filetype"; fail
 	;;
 
 esac	
 
 
-cpio -id < zipped.cpio 
+cpio -id < zipped.cpio || fail
 rm zipped.cpio 
 
+echo
 echo Success! 
 echo
 echo The directory "$dir_name" should now contain the contents of the initramfs
