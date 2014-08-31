@@ -7,12 +7,12 @@ file="custom_initramfs.igz"
 
 fail(){
 echo
-echo Borked! either the cpio or gzip operation failed
+echo "Borked! either the cpio or gzip operation failed" >&2
 exit
 }
 mount_fail(){
 echo
-echo Please manually mount your boot directory
+echo "Please manually mount your boot directory" >&2
 exit
 }
 
@@ -21,6 +21,7 @@ if [ "$(id -u)" != "0" ]; then
     echo "You must have root permissions to run this script"
     exit 1
 fi
+
 echo creating cpio archive...
 find . |cpio -H newc -o > /tmp/temp.cpio || fail
 sleep 1
